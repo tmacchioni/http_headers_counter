@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # 
 # Prerequisite
-# sudo apt-get install -y python3-scapy
+# sudo apt-get install -y python3-pip
+# pip3 install --pre scapy[basic]
 #
 # Run
 # ./http_headers_counter.py
@@ -132,6 +133,10 @@ headers_counts = Counter()
 
 # Create a list of pcap file names from DIR_PCAPS directory
 files_list = glob.glob(f'{DIR_PCAPS}/*.pcap')
+
+if not len(files_list):
+	print(f"Error: there's no pcap files in {DIR_PCAPS} directory")
+	exit()
 
 load_layer("http")
 
