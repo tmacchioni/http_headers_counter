@@ -135,8 +135,8 @@ headers_counts = Counter()
 files_list = glob.glob(f'{DIR_PCAPS}/*.pcap')
 
 if not len(files_list):
-	print(f"Error: there's no pcap files in {DIR_PCAPS} directory")
-	exit()
+    print(f"Error: there's no pcap files in {DIR_PCAPS} directory")
+    exit()
 
 load_layer("http")
 
@@ -144,28 +144,27 @@ load_layer("http")
 # Iterate the files
 for pcap_file in files_list:
 
-	print(f'Reading file {pcap_file}')
+    print(f'Reading file {pcap_file}')
 
-	pkts = rdpcap(pcap_file) # Read packets from pcap_file 
-	
-	# Iterate the packets 
-	for packet in pkts:
+    pkts = rdpcap(pcap_file) # Read packets from pcap_file 
+    
+    # Iterate the packets 
+    for packet in pkts:
 
-		if packet.haslayer('HTTP'):
-			http_packet = str(packet[HTTP]) # Convert to string
-			headers_packet_dict = {}
-			try:
-				# Remove the request or response line and the payload of http packet
-				http_packet = http_packet[http_packet.index("\\r\\n")+4:http_packet.index("\\r\\n\\r\\n")+4]
-
-				# Create a dictionary { <header name> : <value> } 
-				headers_packet_dict = dict(re.findall(r"(?P<name>.*?): (?P<value>.*?)\\r\\n", http_packet))
-			except: 
-				continue
-
-			# Update every header in the Header Counter
-			headers_counts.update(header for header in headers_packet_dict.keys())
-
+        if packet.haslayer('HTTP'):
+            http_packet = str(packet[HTTP]) # Convert to string
+            headers_packet_dict = {}
+            try:
+                # Remove the request or response line and the payload of http packet
+                http_packet = http_packet[http_packet.index("\\r\\n")+4:http_packet.index("\\r\\n\\r\\n")]
+                
+                # Create list of header line
+                header_lines = http_packet.split('\\r\\n')
+                for line in header_lines:
+                    header = line.split(':')[0]
+                    headers_counts.update({header})
+            except: 
+                continue
 
 # Final print
 print('\n\n\033[1m{:40}{:20}{}\033[0m'.format('HEADER', 'COUNTS', 'KNOWN'))
@@ -173,13 +172,13 @@ print('\n\n\033[1m{:40}{:20}{}\033[0m'.format('HEADER', 'COUNTS', 'KNOWN'))
 total_headers_known = 0
 for key,value in headers_counts.most_common():
 
-	headerIsKnown = False
+    headerIsKnown = False
 
-	if key in KNOWN_HEADERS:
-		headerIsKnown = True
-		total_headers_known = total_headers_known + 1
+    if key in KNOWN_HEADERS:
+        headerIsKnown = True
+        total_headers_known = total_headers_known + 1
 
-	print ('{:34}{:10}{knwon:>20}'.format(key, value, knwon = 'yes' if headerIsKnown else 'no'))
+    print ('{:34}{:10}{knwon:>20}'.format(key, value, knwon = 'yes' if headerIsKnown else 'no'))
 
 total_headers_found = len(headers_counts)
 print('\nTotal = {} headers | {} knowns | {} unknowns'.format(total_headers_found, total_headers_known, (total_headers_found - total_headers_known)))
