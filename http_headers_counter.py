@@ -11,9 +11,12 @@
 from scapy.all import *
 from scapy.layers import http
 from collections import Counter
+from pathlib import Path
+import os
 import glob
 
-DIR_PCAPS = "./pcaps"
+SCRIPT_DIR = Path(os.path.dirname(os.path.abspath(__file__)))
+PCAPS_DIR = Path(f'{SCRIPT_DIR}/pcaps')
 
 # https://en.wikipedia.org/wiki/List_of_HTTP_header_fields
 
@@ -131,15 +134,15 @@ KNOWN_HEADERS = [
 # Create a Header Counter
 headers_counts = Counter()
 
-# Create a list of pcap file names from DIR_PCAPS directory
-files_list = glob.glob(f'{DIR_PCAPS}/*.pcap')
+# Create a list of pcap file names from PCAPS_DIR
+os.chdir(f'{PCAPS_DIR}')
+files_list = glob.glob('*.pcap')
 
 if not len(files_list):
-	print(f"Error: there's no pcap files in {DIR_PCAPS} directory")
+	print(f"Error: no pcap files was found")
 	exit()
 
 load_layer("http")
-
 
 # Iterate the files
 for pcap_file in files_list:
