@@ -165,7 +165,7 @@ def final_print():
 
     total_headers_found = len(headers_counts)
     print(f'\nTotal HTTP packets analized: {num_of_http_pkts}')
-    print('Total HTTP headers = {} ({} knowns | {} unknowns)'.format(total_headers_found, total_headers_known, (total_headers_found - total_headers_known)))
+    print('Total HTTP headers found: {} ({} knowns | {} unknowns)'.format(total_headers_found, total_headers_known, (total_headers_found - total_headers_known)))
 
 ##############################################################################################################
 
@@ -213,7 +213,7 @@ if(args.files):
     files_list = args.files
 elif(args.dir):
     if(not os.path.isdir(args.dir)):
-        print(f'*Error: {args.dir} is not a directory')
+        print(f"*Error: '{args.dir}' is not a directory")
         sys.exit(0)
     PCAPS_DIR = Path(args.dir)
     os.chdir(f'{PCAPS_DIR}')
@@ -228,10 +228,10 @@ if not len(files_list):
 # Iterate the files
 for pcap_file in files_list:
     if(not os.path.isfile(pcap_file)):
-        print(f'*Error: {pcap_file} is not a file')
+        print(f"*Error: '{pcap_file}' is not a file")
         continue
         
-    print(f'Reading from {pcap_file}')
+    print(f"Reading from '{pcap_file}'")
     pkts = sniff(offline=pcap_file, prn=packet_parser, bfilter='tcp') # Read packets from pcap_file 
 
 # Final print
