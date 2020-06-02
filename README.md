@@ -76,3 +76,6 @@ Total HTTP headers found: 39 (29 knowns | 10 unknowns)
 
 ```
 
+## Tested systems
+- Ubuntu 20.04 64bit
+- Windows 10 64bit
