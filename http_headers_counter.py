@@ -28,7 +28,12 @@ signal.signal(signal.SIGINT, signal_handler)
 SCRIPT_DIR = Path(os.path.dirname(os.path.abspath(__file__)))
 PCAPS_DIR = Path(f'{SCRIPT_DIR}/pcaps') #default directory
 
-load_layer("http")
+try:
+    load_layer("http")
+except:
+    print("*Error: could not load 'http' layer from scapy library")
+    sys.exit(0)
+    
 headers_counts = Counter()
 num_of_http_pkts = 0
 
@@ -213,12 +218,12 @@ if(args.files):
     files_list = args.files
 elif(args.dir):
     if(not os.path.isdir(args.dir)):
-        print(f"*Error: '{args.dir}' is not a directory")
+        print(f"*Error: directory '{args.dir}' not found")
         sys.exit(0)
     PCAPS_DIR = Path(args.dir)
     os.chdir(f'{PCAPS_DIR}')
     files_list = glob.glob('*.pcap')
-    print(f"Looking for pcaps file in '{os.getcwd()}' directory")
+    print(f"Looking for pcap files in '{os.getcwd()}' directory")
     
 # Check if pcap files was found
 if not len(files_list):
